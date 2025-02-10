@@ -1,0 +1,35 @@
+### GET '/'
+GET http://localhost:5000
+
+### POST '/registro'
+POST http://localhost:5000/auth/register
+Content-Type: application/json
+
+{
+    "name":"Vinicius",
+    "email":"email@gmail.com",
+    "password":"123456789"
+}
+
+
+### GET '/login'
+POST http://localhost:5000/auth/login
+Content-Type: application/json
+
+{
+    "email":"vini@vini",
+    "password":"Mari"
+}
+
+### GET '/tasks'
+GET http://localhost:5000/tasks
+Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NywiaWF0IjoxNzM5MjE5OTY5LCJleHAiOjE3MzkzMDYzNjl9._Pg_r209IPY1rleajlIDnPXGUFdpSgEj0D05Xu7IRpU
+
+### POST '/tasks'
+POST http://localhost:5000/tasks
+Content-Type: application/json
+Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NywiaWF0IjoxNzM5MjE5OTY5LCJleHAiOjE3MzkzMDYzNjl9._Pg_r209IPY1rleajlIDnPXGUFdpSgEj0D05Xu7IRpU
+
+{
+    "task":"Terminar o projeto"
+}

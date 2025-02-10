@@ -1,1 +1,3 @@
 */node_modules
+backend/pg_data
+backend/.env

@@ -8,17 +8,13 @@ export default function Signup() {
   const submitHandler = async (e: React.FormEvent<any>) => {
     e.preventDefault();
 
-    const form = e.currentTarget;
-    const name = form.usuario as HTMLInputElement;
-    const email = form.email as HTMLInputElement;
-    const password = form.password as HTMLInputElement;
+    const formData = new FormData(e.currentTarget);
+    const name = formData.get("name") as string;
+    const email = formData.get("email") as string;
+    const password = formData.get("password") as string;
 
-    if (name.value && email.value && password.value) {
-      let json = await moduleApi.createAccount(
-        name.value,
-        email.value,
-        password.value
-      );
+    if (name && email && password) {
+      let json = await moduleApi.createAccount(name, email, password);
       if (json) {
         alert("Criação bem sucedida!");
       } else {

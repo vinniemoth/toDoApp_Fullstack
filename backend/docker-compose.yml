@@ -1,0 +1,15 @@
+services:
+  todo_pg:
+    image: postgres:17-alpine
+    container_name: todo_pg
+    restart: always
+    environment:
+      POSTGRES_DB: todo
+      POSTGRES_USER: todo
+      POSTGRES_PASSWORD: todo
+    volumes:
+      - ./pg_data:/var/lib/postgresql/data # a pasta pg_data tem que ir pro gitignore
+    ports:
+      - 3000:5432
+    expose:
+      - 3000
