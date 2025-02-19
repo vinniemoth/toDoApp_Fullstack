@@ -4,7 +4,7 @@ import { moduleApi } from "../Api";
 
 interface NewSubTaskModalProps {
   taskId: string;
-  subTaskIsActive: boolean;
+  isActive: boolean;
   onToggle: () => void;
 }
 
@@ -20,13 +20,13 @@ export default function NewSubTaskModal(props: NewSubTaskModalProps) {
 
     const formData = new FormData(e.currentTarget);
     const subTask = formData.get("subTaskName") as string;
+    props.onToggle();
 
     if (subTask && props.taskId) {
       let json = await moduleApi.createSubTask(props.taskId, subTask);
       if (json) {
         console.log(json);
         alert("Tarefa criada com sucesso.");
-        props.onToggle();
       } else {
         alert("Erro ao criar sub-tarefa.");
       }
@@ -37,7 +37,7 @@ export default function NewSubTaskModal(props: NewSubTaskModalProps) {
 
   return (
     <div
-      className={props.subTaskIsActive ? style.active : style.hidden}
+      className={props.isActive ? style.active : style.hidden}
       onClick={handleBackdropClick}
     >
       <div className={style.modal} onClick={(e) => e.stopPropagation()}>

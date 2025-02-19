@@ -1,11 +1,13 @@
 import { useEffect, useState } from "react";
 import Header from "../../components/header";
 import NewTaskModal from "../../components/NewTaskModal";
+import VisualizerModal from "../../components/VisualizerModal";
+import NewSubTaskModal from "../../components/NewSubTaskModal";
 import { Plus } from "lucide-react";
 import { moduleApi } from "../../Api";
 import style from "./Dashboard.module.css";
 import TaskPill from "../../components/TaskPill";
-import NewSubTaskModal from "../../components/NewSubTaskModal";
+import { useNavigate } from "react-router-dom";
 
 interface Task {
   id: string;
@@ -13,20 +15,44 @@ interface Task {
   completed: boolean;
 }
 
+interface ActiveModals {
+  taskIsActive: boolean;
+  subtaskIsActive: boolean;
+  visualizerIsActive: boolean;
+}
+
 export default function Dashboard() {
+  const navigate = useNavigate();
   const [tasks, setTasks] = useState<Task[]>([]);
-  const [isActive, setIsActive] = useState<boolean>(false);
-  const [subTaskIsActive, setSubTaskIsActive] = useState<boolean>(false);
   const [completionUpdate, setCompletionUpdate] = useState<boolean>(false);
   const [selectedTaskId, setSelectedTaskId] = useState<string>("");
+  const [activeModals, setActiveModals] = useState<ActiveModals>({
+    taskIsActive: false,
+    subtaskIsActive: false,
+    visualizerIsActive: false,
+  });
 
   const handleNewTask = () => {
-    setIsActive(!isActive);
+    setActiveModals((prev) => ({
+      ...prev,
+      taskIsActive: !prev.taskIsActive,
+    }));
   };
 
   const handleNewSubTask = (taskId: string) => {
     setSelectedTaskId(taskId);
-    setSubTaskIsActive(!subTaskIsActive);
+    setActiveModals((prev) => ({
+      ...prev,
+      subtaskIsActive: !prev.subtaskIsActive,
+    }));
+  };
+
+  const handleVisualization = (taskId: string) => {
+    setSelectedTaskId(taskId);
+    setActiveModals((prev) => ({
+      ...prev,
+      visualizerIsActive: !prev.visualizerIsActive,
+    }));
   };
 
   const fetchTasks = async () => {
@@ -43,6 +69,13 @@ export default function Dashboard() {
     fetchTasks();
   }, [completionUpdate]);
 
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      navigate("/login");
+    }
+  }, []);
+
   const handleToggleCompletion = async (id: string, completed: boolean) => {
     try {
       await moduleApi.modifyTask(id, completed);
@@ -55,11 +88,19 @@ export default function Dashboard() {
   return (
     <>
       <Header />
-      <NewTaskModal isActive={isActive} onToggle={handleNewTask} />
+      <NewTaskModal
+        isActive={activeModals.taskIsActive}
+        onToggle={handleNewTask}
+      />
       <NewSubTaskModal
         taskId={selectedTaskId}
-        subTaskIsActive={subTaskIsActive}
-        onToggle={() => setSubTaskIsActive(!subTaskIsActive)}
+        isActive={activeModals.subtaskIsActive}
+        onToggle={() => handleNewSubTask(selectedTaskId)}
+      />
+      <VisualizerModal
+        taskId={selectedTaskId}
+        isActive={activeModals.visualizerIsActive}
+        onToggle={() => handleVisualization(selectedTaskId)}
       />
       <div className={style.wrapper}>
         {tasks.map((task) => (
@@ -70,6 +111,7 @@ export default function Dashboard() {
             completed={task.completed}
             onToggleCompletion={handleToggleCompletion}
             handleNewSubTask={() => handleNewSubTask(task.id)}
+            handleVisualization={() => handleVisualization(task.id)}
           />
         ))}
         <div className={style.plus} onClick={handleNewTask}>

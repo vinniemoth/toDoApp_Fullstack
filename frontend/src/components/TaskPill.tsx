@@ -1,4 +1,4 @@
-import { Check, Ellipsis, Plus } from "lucide-react";
+import { Check, Ellipsis, Plus, X } from "lucide-react";
 import style from "./taskPill.module.css";
 import { useEffect, useState } from "react";
 import { moduleApi } from "../Api";
@@ -9,6 +9,7 @@ interface taskPillProps {
   completed: boolean;
   onToggleCompletion: (id: string, completed: boolean) => void;
   handleNewSubTask: () => void;
+  handleVisualization: () => void;
 }
 
 interface SubTask {
@@ -30,7 +31,6 @@ export default function TaskPill(props: taskPillProps) {
   const fetchSubTasks = async () => {
     try {
       const json: SubTask[] = await moduleApi.fetchSubTasks(props.id);
-      console.log("subtasks", json);
       setSubTasks(json);
     } catch (error) {
       console.error("Erro ao buscar subtarefas:", error);
@@ -39,7 +39,6 @@ export default function TaskPill(props: taskPillProps) {
 
   useEffect(() => {
     fetchSubTasks();
-    console.log("State", subtasks);
   }, []);
 
   return (
@@ -50,7 +49,14 @@ export default function TaskPill(props: taskPillProps) {
           {completed ? <Check size={50} /> : <Ellipsis size={50} />}
         </div>
         {subtasks.map((subtask) => (
-          <div key={subtask.id} className={style.subtaskCircle}></div>
+          <div
+            key={subtask.id}
+            className={style.subtaskCircle}
+            style={{ backgroundColor: subtask.completed ? "green" : "red" }}
+            onClick={props.handleVisualization}
+          >
+            {subtask.completed ? <Check /> : <X />}
+          </div>
         ))}
         <div className={style.plus} onClick={props.handleNewSubTask}>
           <Plus />
