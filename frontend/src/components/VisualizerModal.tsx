@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
-import style from "./NewTaskModal.module.css";
+import style from "./VisualizerModal.module.css";
 import { moduleApi } from "../Api";
-// import { moduleApi } from "../Api";
 
 interface SubTask {
   id: string;
@@ -56,13 +55,13 @@ export default function VisualizerModal(props: VisualizerModal) {
             <div key={subtask.id} className={style.subtaskItem}>
               <div className={style.subtaskTextContainer}>
                 <p className={style.taskName}>{subtask.subtask}</p>
-                <span
-                  className={
+                <button
+                  className={`${style.status} ${
                     subtask.completed ? style.completed : style.pending
-                  }
+                  }`}
                 >
                   {subtask.completed ? "Concluída" : "Pendente"}
-                </span>
+                </button>
               </div>
             </div>
           ))}
