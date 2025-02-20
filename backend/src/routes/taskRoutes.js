@@ -96,4 +96,31 @@ router.get("/:id/subtask", async (req, res) => {
     res.status(500).send({ message: "Erro ao buscar subtarefas" });
   }
 });
+
+router.put("/:id/subtask/:subtaskid", async (req, res) => {
+  const { id, subtaskid } = req.params;
+  const { completed } = req.body;
+  console.log(
+    `Teoricamente, ele tá chegando com essas informações: completed: ${completed}`
+  );
+  try {
+    const updatedSubTask = await prisma.subTodo.update({
+      where: {
+        id: parseInt(subtaskid),
+      },
+      data: {
+        completed,
+      },
+    });
+    console.log(
+      "Teoricamente, ele tá salvando essas informações:",
+      updatedSubTask
+    );
+    res.send({ updatedSubTask });
+  } catch (err) {
+    console.log("erro");
+    res.send(err);
+  }
+});
+
 export default router;

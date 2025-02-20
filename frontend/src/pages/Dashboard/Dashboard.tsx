@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import Header from "../../components/header";
 import NewTaskModal from "../../components/NewTaskModal";
-import VisualizerModal from "../../components/VisualizerModal";
 import NewSubTaskModal from "../../components/NewSubTaskModal";
 import { Plus } from "lucide-react";
 import { moduleApi } from "../../Api";
@@ -24,7 +23,11 @@ interface ActiveModals {
 export default function Dashboard() {
   const navigate = useNavigate();
   const [tasks, setTasks] = useState<Task[]>([]);
-  const [completionUpdate, setCompletionUpdate] = useState<boolean>(false);
+  const [completionUpdate, setCompletionUpdate] = useState<
+    boolean | undefined
+  >();
+  const [subtaskCompletionUpdate, setSubTaskCompletionUpdate] =
+    useState<boolean>(false);
   const [selectedTaskId, setSelectedTaskId] = useState<string>("");
   const [activeModals, setActiveModals] = useState<ActiveModals>({
     taskIsActive: false,
@@ -67,7 +70,7 @@ export default function Dashboard() {
 
   useEffect(() => {
     fetchTasks();
-  }, [completionUpdate]);
+  }, [completionUpdate, subtaskCompletionUpdate]);
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -79,9 +82,29 @@ export default function Dashboard() {
   const handleToggleCompletion = async (id: string, completed: boolean) => {
     try {
       await moduleApi.modifyTask(id, completed);
+      setTasks((prev) =>
+        prev.map((task) =>
+          task.id === id ? { ...task, completed: completed } : task
+        )
+      );
       setCompletionUpdate(!completionUpdate);
     } catch (error) {
       console.log("Erro ao atualizar a tarefa:", error);
+    }
+  };
+
+  const handleSubtaskCompletion = async (
+    id: string,
+    subtaskId: string,
+    completed: boolean,
+    callback: () => void
+  ) => {
+    try {
+      await moduleApi.modifySubTask(id, subtaskId, completed);
+      setSubTaskCompletionUpdate(!subtaskCompletionUpdate);
+      callback();
+    } catch (error) {
+      console.error(error);
     }
   };
 
@@ -97,11 +120,6 @@ export default function Dashboard() {
         isActive={activeModals.subtaskIsActive}
         onToggle={() => handleNewSubTask(selectedTaskId)}
       />
-      <VisualizerModal
-        taskId={selectedTaskId}
-        isActive={activeModals.visualizerIsActive}
-        onToggle={() => handleVisualization(selectedTaskId)}
-      />
       <div className={style.wrapper}>
         {tasks.map((task) => (
           <TaskPill
@@ -112,6 +130,7 @@ export default function Dashboard() {
             onToggleCompletion={handleToggleCompletion}
             handleNewSubTask={() => handleNewSubTask(task.id)}
             handleVisualization={() => handleVisualization(task.id)}
+            handleSubtaskCompletion={handleSubtaskCompletion}
           />
         ))}
         <div className={style.plus} onClick={handleNewTask}>

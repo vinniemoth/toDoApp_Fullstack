@@ -108,4 +108,23 @@ export const moduleApi = {
     let json = response.json();
     return json;
   },
+
+  modifySubTask: async (id: string, subtaskId: string, completed: boolean) => {
+    const token = localStorage.getItem("token");
+    let response = await fetch(
+      `http://localhost:5000/tasks/${id}/subtask/${subtaskId}`,
+      {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `${token}`,
+        },
+        body: JSON.stringify({
+          completed: completed,
+        }),
+      }
+    );
+    const json = response.json();
+    return json;
+  },
 };

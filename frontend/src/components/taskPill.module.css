@@ -1,4 +1,5 @@
 .taskContainer {
+  position: relative;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -62,8 +63,23 @@ h2 {
   background-color: green;
   border-radius: 50%;
   cursor: pointer;
+  position: relative;
 }
 
 .subtaskCircle * {
   color: black;
+}
+
+.hoverModal {
+  position: absolute;
+  top: -30px; /* Adjust as needed */
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: white;
+  border: 1px solid #ccc;
+  padding: 5px;
+  border-radius: 3px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  z-index: 10;
+  white-space: nowrap;
 }

@@ -47,3 +47,12 @@ Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NywiaWF0IjoxNzM5Mzkz
 GET http://localhost:5000/tasks/6/subtask
 Content-Type: application/json
 Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NywiaWF0IjoxNzM5MzkzMjUxLCJleHAiOjE3Mzk0Nzk2NTF9.-6hb89X7Dhg78ngVjXG64ixn5pBUjAmV38RNaJj-Dys
+
+### PUT /tasks/:id/subtask/:subtaskId
+PUT http://localhost:5000/tasks/6/subtask/3
+Content-Type: application/json
+Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NywiaWF0IjoxNzQwMDAwMTczLCJleHAiOjE3NDAwODY1NzN9.fXU-VJdZDGRIBNwezithRor4bRzfZUIVGXHBMpB8Ktc
+
+{
+    "completed":"false"
+}

@@ -10,6 +10,12 @@ interface taskPillProps {
   onToggleCompletion: (id: string, completed: boolean) => void;
   handleNewSubTask: () => void;
   handleVisualization: () => void;
+  handleSubtaskCompletion: (
+    id: string,
+    subtaskId: string,
+    completed: boolean,
+    callback: () => void
+  ) => void;
 }
 
 interface SubTask {
@@ -22,10 +28,14 @@ interface SubTask {
 export default function TaskPill(props: taskPillProps) {
   const [completed, setCompleted] = useState(props.completed);
   const [subtasks, setSubTasks] = useState<SubTask[]>([]);
+  const [subtaskUpdate, setSubtaskUpdate] = useState<boolean>(false);
+  const [hoveredSubtask, setHoveredSubtask] = useState<SubTask | null>(null);
 
   const toggleCompletion = async () => {
-    setCompleted(!completed);
+    const newCompleted = !completed;
+    setCompleted(!newCompleted);
     await moduleApi.modifyTask(props.id, completed);
+    props.onToggleCompletion(props.id, newCompleted);
   };
 
   const fetchSubTasks = async () => {
@@ -39,7 +49,11 @@ export default function TaskPill(props: taskPillProps) {
 
   useEffect(() => {
     fetchSubTasks();
-  }, []);
+  }, [subtaskUpdate]);
+
+  const updateSubtasks = () => {
+    setSubtaskUpdate(!subtaskUpdate);
+  };
 
   return (
     <div key={props.id} className={style.taskContainer}>
@@ -53,9 +67,21 @@ export default function TaskPill(props: taskPillProps) {
             key={subtask.id}
             className={style.subtaskCircle}
             style={{ backgroundColor: subtask.completed ? "green" : "red" }}
-            onClick={props.handleVisualization}
+            onMouseEnter={() => setHoveredSubtask(subtask)}
+            onMouseLeave={() => setHoveredSubtask(null)}
+            onClick={() =>
+              props.handleSubtaskCompletion(
+                props.id,
+                subtask.id,
+                !subtask.completed,
+                updateSubtasks
+              )
+            }
           >
             {subtask.completed ? <Check /> : <X />}
+            {hoveredSubtask && hoveredSubtask.id === subtask.id && (
+              <div className={style.hoverModal}>{hoveredSubtask.subtask}</div>
+            )}
           </div>
         ))}
         <div className={style.plus} onClick={props.handleNewSubTask}>
